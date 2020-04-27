@@ -1,8 +1,9 @@
-import React, { Component } from 'react'; 
+import React, { Component } from 'react';
 import CKEditor from '@ckeditor/ckeditor5-react'
 import ClassicEditor from '../ckeditor5/build/ckeditor'
+import { toast, ToastContainer } from 'react-nextjs-toast'
 
-class Editor extends Component {
+export default class Editor extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -10,7 +11,6 @@ class Editor extends Component {
       editor: null
     };
     this.handleClick = this.handleClick.bind(this);
-    this.loadData = this.loadData.bind(this);
   }
 
   handleClick() {
@@ -27,19 +27,21 @@ class Editor extends Component {
 
       fetch("http://localhost:3030/upload", requestOptions)
         .then(response => response.text())
-        .then(result => console.log(result))
-        .catch(error => console.log('error', error));
+        .then(result => {
+          console.log(result);
+          toast.notify('Yeah!', {
+            duration: 5,
+            type: "success"
+          });
+        })
+        .catch(error => {
+          console.log('error', error);
+          toast.notify('Oh shit...', {
+            duration: 5,
+            type: "error"
+          });
+        });
     }
-  }
-
-  loadData() {
-    fetch("http://localhost:3030/img/5ea71b168e436a1b5cb6cf10", { method: 'GET'})
-      .then(response => response.json())
-      .then(result => {
-        console.log(result.img)
-        this.state.editor.setData(result.img.img)
-      })
-      .catch(error => console.log('error', error));
   }
 
   render() {
@@ -49,35 +51,32 @@ class Editor extends Component {
     }
 
     return (
-    <div>
-      <CKEditor
-        editor={ ClassicEditor }
-        data={ '' }
-        onInit={ editor => {
-          // You can store the "editor" and use when it is needed.
-          console.log( 'Editor is ready to use!', editor );
-          this.state.editor = editor;
-          this.loadData();
-        } }
-        onChange={ ( event, editor ) => {
-          const data = editor.getData()
-          this.state.data = data
-          console.log( this.state.data)
-        } }
-        onBlur={ ( event, editor ) => {
-          console.log( 'Blur.', editor )
-        } }
-        onFocus={ ( event, editor ) => {
-          console.log( 'Focus.', editor )
-        } }
-      />
+      <div>
+        <ToastContainer />
+        <CKEditor
+          editor={ClassicEditor}
+          data={''}
+          onInit={editor => {
+            // You can store the "editor" and use when it is needed.
+            console.log('Editor is ready to use!', editor);
+            this.state.editor = editor;
+          }}
+          onChange={(event, editor) => {
+            const data = editor.getData()
+            this.state.data = data
+            console.log(this.state.data)
+          }}
+          onBlur={(event, editor) => {
+            console.log('Blur.', editor)
+          }}
+          onFocus={(event, editor) => {
+            console.log('Focus.', editor)
+          }}
+        />
 
-      <button onClick={this.loadData}>Show</button>
-      <button style={primary} onClick={this.handleClick}>Upload</button>
-    </div>
+        <button style={primary} onClick={this.handleClick}>Upload</button>
+      </div>
     )
   }
-  
-}
 
-export default Editor;
+}
