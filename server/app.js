@@ -44,7 +44,7 @@ app.post('/upload', upload.none(), function (req, res, next) {
 
         res.status(201).json({
             "message": "Uploaded",
-            "img": file
+            "data": file
         })
     })
     
@@ -59,7 +59,7 @@ app.get('/upload', function (req, res) {
 app.get('/img', function (req, res) {
     FileModel.find({}, function (err, file) {
         res.json({
-            "img" : file
+            "data" : file
         })
     })
 })
@@ -68,7 +68,7 @@ app.get('/img/:id', function (req, res) {
     // use 5ea6ff77ab79f7a72ca2d94a
     FileModel.findById(req.params.id, function (err, file) {
         res.json({
-            "img" : file
+            "data" : file
         })
     })
 })
