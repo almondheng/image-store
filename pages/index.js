@@ -1,5 +1,6 @@
 import dynamic from 'next/dynamic'
 import Head from 'next/head'
+import Link from 'next/link'
 
 const Editor = dynamic(
   () => import('../components/editor'),
@@ -15,9 +16,15 @@ export default function Home() {
       </Head>
 
       <main>
-         <h1 className="title">
+        <h1 className="title">
          Upload an image!
         </h1>
+
+        <div className="card">
+          <Link href="/list">
+            <a>List</a>
+          </Link>
+        </div>
 
         {/*
 

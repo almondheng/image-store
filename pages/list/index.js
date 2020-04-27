@@ -1,8 +1,15 @@
+import dynamic from 'next/dynamic'
 import Head from 'next/head'
+import Link from 'next/link'
 
-export default function Home() {
+const Image = dynamic(
+  () => import('../../components/image'),
+  { ssr: false }
+)
+
+export default function List() {
   return (
-    <div className="container">
+    <div>
       <Head>
         <title>Image List</title>
         <link rel="icon" href="/favicon.ico" />
@@ -10,12 +17,16 @@ export default function Home() {
 
       <main>
         <h1 className="title">
-          List Images
+          List of Images
         </h1>
 
-        <p className="description">
-          Get started by editing <code>pages/index.js</code>
-        </p>
+        <div className="card">
+          <Link href="/">
+            <a>Home</a>
+          </Link>
+        </div>
+
+        <Image />
       </main>
 
       <style jsx>{`
