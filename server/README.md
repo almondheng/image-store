@@ -4,7 +4,7 @@ yarn install
 yarn run dev
 ```
 
-Proceed to http://localhost:3000
+Proceed to http://localhost:3030
 
 ### To upload
 
