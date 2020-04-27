@@ -1,4 +1,5 @@
 var express = require('express');
+var cors = require('cors');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var multer = require('multer')
@@ -21,6 +22,7 @@ const FileModel = mongoose.model('File', fileSchema)
 
 var app = express();
 
+app.use(cors());
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
