@@ -1,12 +1,16 @@
 var express = require('express');
 var cors = require('cors');
-var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var multer = require('multer')
 var upload = multer()
 
+const { ApolloServer, gql } = require('apollo-server-express');
+const { makeExecutableSchema } = require('graphql-tools');
+
+// LOADING MONGO URI
 require('dotenv').config()
 
+// MONGO DB
 var mongoose = require('mongoose');
 mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true });
 var db = mongoose.connection;
@@ -20,14 +24,60 @@ var fileSchema = new mongoose.Schema({
 
 const FileModel = mongoose.model('File', fileSchema)
 
+// EXPRESS
 var app = express();
 
 app.use(cors());
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser());
 
+// APOLLO GRAPHQL
+const typeDefs = gql`
+    type Images {
+        img: String
+    }
+
+    type Query {
+        data: Images
+    }
+    
+    type Mutation {
+        uploadImage(img: String): String
+    }
+`
+
+// TODO: Add mongo data source
+
+const resolvers = {
+    Query: {
+        data: () => FileModel.find({}, function (err, file) {
+            if (err) return err
+            return file
+      }),
+    },
+  };
+    
+
+const schema = makeExecutableSchema({
+    typeDefs,
+    resolvers
+  });
+
+
+const server = new ApolloServer({
+    schema,
+    cors: true,
+    playground: process.env.NODE_ENV === 'development' ? true : false,
+    introspection: true,
+    tracing: true,
+    path: '/',
+});
+    
+server.applyMiddleware({ app });
+
+
+// RESTFUL ROUTES
 app.post('/upload', upload.none(), function (req, res, next) {
 
     console.log(req.body)
