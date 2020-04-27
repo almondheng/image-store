@@ -1,4 +1,10 @@
+import dynamic from 'next/dynamic'
 import Head from 'next/head'
+
+const Editor = dynamic(
+  () => import('../components/editor'),
+  { ssr: false }
+)
 
 export default function Home() {
   return (
@@ -23,6 +29,8 @@ export default function Home() {
             <p>Find in-depth information about Next.js features and API.</p>
           </a>
         </div>
+
+        <Editor />
       </main>
 
       <style jsx>{`
