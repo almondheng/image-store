@@ -109,6 +109,12 @@ app.get('/img/:id', function (req, res) {
     })
 })
 
+app.delete('/img/:id', function (req, res) {
+    FileModel.findByIdAndRemove(req.params.id, function (err, data) {
+        res.json({ data })
+    })
+})
+
 app.use(function (err, req, res, next) {
     // set locals, only providing error in development
     res.locals.message = err.message;
