@@ -7,7 +7,7 @@ export default class Editor extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      data: props.data.img || '',
+      data: props.data || '',
       editor: null
     };
     this.handleClick = this.handleClick.bind(this);
@@ -94,7 +94,7 @@ export default class Editor extends Component {
         <ToastContainer />
         <CKEditor
           editor={ClassicEditor}
-          data={this.state.data}
+          data={this.state.data.img}
           onInit={editor => {
             // You can store the "editor" and use when it is needed.
             console.log('Editor is ready to use!', editor);
