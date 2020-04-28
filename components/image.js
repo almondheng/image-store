@@ -1,11 +1,26 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
+import dynamic from 'next/dynamic'
+import Link from 'next/link'
+import { useRouter } from 'next/router'
+
+const Editor = dynamic(
+  () => import('./editor'),
+  { ssr: false }
+)
 
 export default function Image() {
-  const [state, setState] = useState({ data: [] })
+  const router = useRouter()
+  const { id } = router.query
+
+  const [state, setState] = useState({})
+  const [isLoading, setIsLoading] = useState(true)
 
   const fetchData = async () => {
-    const res = await fetch("http://localhost:3030/img")
-    setState(await res.json())
+    setIsLoading(true)
+    const res = await fetch(`http://localhost:3030/img/${id}`)
+    const { data } = await res.json()
+    setState(data)
+    setIsLoading(false)
   }
 
   useEffect(() => {
@@ -13,55 +28,18 @@ export default function Image() {
   }, [])
 
   // delete almond
-  const dealmond = async id => {
+  const dealmond = async () => {
     await fetch(`http://localhost:3030/img/${id}`, { method: 'delete' })
-    fetchData()
+    router.replace('/list')
   }
 
   return (
     <div className="container">
 
-    {
-      state.data.map(value => (
-        <div key={value._id} id={value._id}
-          dangerouslySetInnerHTML={ { __html: value.img } }
-          onClick={ () => dealmond(value._id) } />
-      ))
-    }
+      { isLoading ? <div>Loading ...</div> : <Editor data={state.img} /> }
 
-    <style jsx>{`
-      .container {
-        display: grid;
-        grid-template-columns: repeat(3, 400px);
-        grid-gap: 20px;
-        justify-content: center;
-        transition: transform .3s;
-      }
+      <button onClick={dealmond}>Delete</button>
 
-      .container > div {
-        border: 1px solid red;
-        height: 400px;
-        width: 400px;
-        overflow: hidden;
-      }
-
-      .container > div:hover {
-        border: 1px solid green;
-        height: 450px;
-        width: 450px;
-      }
-    `}</style>
-
-    <style jsx global>{`
-      figure {
-        margin: 0;  // remove browser default figure
-      }
-
-      .container > div img {
-        height: 100%;
-        max-width: 100%;
-      }
-    `}</style>
     </div>
   )
 }

@@ -1,7 +1,7 @@
 import Head from 'next/head'
 import Link from 'next/link'
 
-import ImageList from '../../components/list'
+import Image from '../../components/image'
 
 export default function List() {
   return (
@@ -20,9 +20,13 @@ export default function List() {
           <Link href="/">
             <a>Home</a>
           </Link>
+
+          <Link href="/list">
+            <a>List</a>
+          </Link>
         </div>
 
-        <ImageList />
+        <Image />
       </main>
 
       <style jsx>{`
