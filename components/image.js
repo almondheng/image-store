@@ -1,7 +1,17 @@
 import { useEffect, useState } from 'react'
 import dynamic from 'next/dynamic'
-import Link from 'next/link'
 import { useRouter } from 'next/router'
+
+import client from "../graphql";
+import { gql } from "apollo-boost";
+
+const GET_IMAGE_BY_ID = gql`
+query imagesById($id: MongoID!) {
+  imagesById(_id: $id) {
+    img
+  }
+}
+`
 
 const Editor = dynamic(
   () => import('./editor'),
@@ -10,16 +20,21 @@ const Editor = dynamic(
 
 export default function Image() {
   const router = useRouter()
-  const { id } = router.query
+  const { id }  = router.query
 
   const [state, setState] = useState({})
   const [isLoading, setIsLoading] = useState(true)
 
   const fetchData = async () => {
     setIsLoading(true)
-    const res = await fetch(`http://localhost:3030/img/${id}`)
-    const { data } = await res.json()
-    setState(data)
+    const res = await client.query({
+      query: GET_IMAGE_BY_ID,
+      variables: {
+        id: id
+      }
+
+    }) 
+    setState(await res.data.imagesById)
     setIsLoading(false)
   }
 

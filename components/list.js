@@ -1,12 +1,25 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
+import { gql } from "apollo-boost";
+import client from "../graphql";
+
 
 export default function ImageList() {
-  const [state, setState] = useState({ data: [] })
+  const [state, setState] = useState({ images: [] })
 
   const fetchData = async () => {
-    const res = await fetch("http://localhost:3030/img")
-    setState(await res.json())
+    const res = await client.query({
+      query: gql`
+      {
+        images {
+          _id
+          img
+        }
+      }
+      `
+    })
+
+    setState(await res.data)
   }
 
   useEffect(() => {
@@ -17,7 +30,7 @@ export default function ImageList() {
     <div className="container">
 
     {
-      state.data.map(value => (
+      state.images.map(value => (
         <Link href="/img/[id]" as={ "/img/" + value._id }>
           <div key={value._id} id={value._id}
             dangerouslySetInnerHTML={ { __html: value.img } } />
