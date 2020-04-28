@@ -7,7 +7,7 @@ export default class Editor extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      data: props.data || '',
+      data: props.data.img || '',
       editor: null
     };
     this.handleClick = this.handleClick.bind(this);
@@ -25,7 +25,7 @@ export default class Editor extends Component {
           redirect: 'follow'
         };
 
-        const { id } = router.query
+        const { id } = this.props.data.id
 
         fetch(`http://localhost:3030/upload/${id}`, requestOptions)
           .then(response => response.text())
@@ -67,7 +67,7 @@ export default class Editor extends Component {
             });
           });
       }
-      
+
     } else {
       toast.notify('No data', {
         duration: 5,
@@ -86,7 +86,7 @@ export default class Editor extends Component {
     if (this.props.data) {
       button = <button style={primary} onClick={this.handleClick}>Update</button>
     } else {
-      button  = <button style={primary} onClick={this.handleClick}>Upload</button>
+      button = <button style={primary} onClick={this.handleClick}>Upload</button>
     }
 
     return (

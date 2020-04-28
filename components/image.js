@@ -36,7 +36,7 @@ export default function Image() {
   return (
     <div className="container">
 
-      { isLoading ? <div>Loading ...</div> : <Editor data={state.img} /> }
+      { isLoading ? <div>Loading ...</div> : <Editor data={state} /> }
 
       <button onClick={dealmond}>Delete</button>
 
