@@ -15,32 +15,64 @@ export default class Editor extends Component {
 
   handleClick() {
     if (this.state.data) {
-      console.log("uploading")
       var formdata = new FormData();
       formdata.append("img", this.state.data);
 
-      var requestOptions = {
-        method: 'POST',
-        body: formdata,
-        redirect: 'follow'
-      };
+      if (this.props.data) {
+        var requestOptions = {
+          method: 'PUT',
+          body: formdata,
+          redirect: 'follow'
+        };
 
-      fetch("http://localhost:3030/upload", requestOptions)
-        .then(response => response.text())
-        .then(result => {
-          console.log(result);
-          toast.notify('Yeah!', {
-            duration: 5,
-            type: "success"
+        const { id } = router.query
+
+        fetch(`http://localhost:3030/upload/${id}`, requestOptions)
+          .then(response => response.text())
+          .then(result => {
+            console.log(result);
+            toast.notify('Yeah!', {
+              duration: 5,
+              type: "success"
+            });
+          })
+          .catch(error => {
+            console.log('error', error);
+            toast.notify('Oh shit...', {
+              duration: 5,
+              type: "error"
+            });
           });
-        })
-        .catch(error => {
-          console.log('error', error);
-          toast.notify('Oh shit...', {
-            duration: 5,
-            type: "error"
+      } else {
+        var requestOptions = {
+          method: 'POST',
+          body: formdata,
+          redirect: 'follow'
+        };
+
+        fetch("http://localhost:3030/upload", requestOptions)
+          .then(response => response.text())
+          .then(result => {
+            console.log(result);
+            toast.notify('Yeah!', {
+              duration: 5,
+              type: "success"
+            });
+          })
+          .catch(error => {
+            console.log('error', error);
+            toast.notify('Oh shit...', {
+              duration: 5,
+              type: "error"
+            });
           });
-        });
+      }
+      
+    } else {
+      toast.notify('No data', {
+        duration: 5,
+        type: "warning"
+      })
     }
   }
 
@@ -48,6 +80,13 @@ export default class Editor extends Component {
     const primary = {
       float: "right",
       marginTop: "5px"
+    }
+
+    let button;
+    if (this.props.data) {
+      button = <button style={primary} onClick={this.handleClick}>Update</button>
+    } else {
+      button  = <button style={primary} onClick={this.handleClick}>Upload</button>
     }
 
     return (
@@ -74,7 +113,7 @@ export default class Editor extends Component {
           }}
         />
 
-        <button style={primary} onClick={this.handleClick}>Upload</button>
+        {button}
       </div>
     )
   }
