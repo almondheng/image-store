@@ -109,6 +109,13 @@ app.get('/img/:id', function (req, res) {
     })
 })
 
+app.put('/img/:id', function (req, res) {
+    FileModel.findByIdAndUpdate(req.params.id, function (err, data) {
+        if (err) throw err
+        res.json({ data })
+    })
+})
+
 app.delete('/img/:id', function (req, res) {
     FileModel.findByIdAndRemove(req.params.id, function (err, data) {
         res.json({ data })
