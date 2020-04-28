@@ -6,6 +6,8 @@ var upload = multer()
 
 const { ApolloServer, gql } = require('apollo-server-express');
 const { makeExecutableSchema } = require('graphql-tools');
+const { composeWithMongoose } = require('graphql-compose-mongoose');
+const { schemaComposer } = require('graphql-compose')
 
 // LOADING MONGO URI
 require('dotenv').config()
@@ -33,42 +35,26 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 // APOLLO GRAPHQL
-const typeDefs = gql`
-    type Images {
-        img: String
-    }
 
-    type Query {
-        data: Images
-    }
-    
-    type Mutation {
-        uploadImage(img: String): String
-    }
-`
+// STEP 2: CONVERT MONGOOSE MODEL TO GraphQL PIECES
+const customizationOptions = {}; // left it empty for simplicity, described below
+const ImageTC = composeWithMongoose(FileModel, customizationOptions);
 
-// TODO: Add mongo data source
+schemaComposer.Query.addFields({
+    images: ImageTC.getResolver('findMany'),
+    imagesById: ImageTC.getResolver('findById')
+})
 
-const resolvers = {
-    Query: {
-        data: () => FileModel.find({}, function (err, file) {
-            if (err) return err
-            return file
-      }),
-    },
-  };
-    
+schemaComposer.Mutation.addFields({
+    imageCreateOne: ImageTC.getResolver('createOne')
+})
 
-const schema = makeExecutableSchema({
-    typeDefs,
-    resolvers
-  });
-
+const schema = schemaComposer.buildSchema()
 
 const server = new ApolloServer({
     schema,
     cors: true,
-    playground: process.env.NODE_ENV === 'development' ? true : false,
+    playground: true,
     introspection: true,
     tracing: true,
     path: '/',
