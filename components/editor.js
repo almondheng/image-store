@@ -3,6 +3,36 @@ import CKEditor from '@ckeditor/ckeditor5-react'
 import ClassicEditor from '../ckeditor5/build/ckeditor'
 import { toast, ToastContainer } from 'react-nextjs-toast'
 
+import client from "../graphql";
+import { gql } from "apollo-boost";
+
+const CREATE_NEW_IMAGE = gql`
+mutation imageCreateOne($img: String) {
+  imageCreateOne(record: {
+    img: $img
+  }) {
+    recordId
+    record {
+      img
+    }
+  } 
+}
+`
+
+const UPDATE_IMAGE_BY_ID = gql`
+mutation imageUpdateById($img: String, $id: MongoID!) {
+  imageUpdateById(record: {
+    _id: $id
+    img: $img
+  }) {
+    recordId
+    record {
+      img
+    }
+  } 
+}
+`
+
 export default class Editor extends Component {
   constructor(props) {
     super(props);
@@ -15,57 +45,50 @@ export default class Editor extends Component {
 
   handleClick() {
     if (this.state.data) {
-      var formdata = new FormData();
-      formdata.append("img", this.state.data);
-
       if (this.props.data) {
-        var requestOptions = {
-          method: 'PUT',
-          body: formdata,
-          redirect: 'follow'
-        };
-
         const id = this.props.data._id
-
-        fetch(`http://localhost:3030/img/${id}`, requestOptions)
-          .then(response => response.text())
-          .then(result => {
-            console.log(result);
-            toast.notify('Yeah!', {
-              duration: 5,
-              type: "success"
-            });
+        client.mutate({
+          mutation: UPDATE_IMAGE_BY_ID,
+          variables: {
+            img: this.state.data,
+            id: id
+          }
+        }).then(res => {
+          console.log(res)
+          toast.notify('Yeah!', {
+            duration: 5,
+            type: 'success'
           })
-          .catch(error => {
-            console.log('error', error);
-            toast.notify('Oh shit...', {
-              duration: 5,
-              type: "error"
-            });
-          });
+          
+        }).catch(err => {
+          console.error(err)
+          toast.notify('ERROR', {
+            duration: 5,
+            type: "error"
+          })
+        })
       } else {
-        var requestOptions = {
-          method: 'POST',
-          body: formdata,
-          redirect: 'follow'
-        };
 
-        fetch("http://localhost:3030/img", requestOptions)
-          .then(response => response.text())
-          .then(result => {
-            console.log(result);
-            toast.notify('Yeah!', {
-              duration: 5,
-              type: "success"
-            });
+        client.mutate({
+          mutation: CREATE_NEW_IMAGE,
+          variables: {
+            img: this.state.data
+          }
+        }).then(res => {
+          console.log(res)
+          toast.notify('Yeah!', {
+            duration: 5,
+            type: 'success'
           })
-          .catch(error => {
-            console.log('error', error);
-            toast.notify('Oh shit...', {
-              duration: 5,
-              type: "error"
-            });
-          });
+
+        }).catch(err => {
+          console.error(err)
+          toast.notify('ERROR', {
+            duration: 5,
+            type: "error"
+          })
+          
+        })
       }
 
     } else {

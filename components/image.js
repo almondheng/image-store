@@ -6,9 +6,18 @@ import client from "../graphql";
 import { gql } from "apollo-boost";
 
 const GET_IMAGE_BY_ID = gql`
-query imagesById($id: MongoID!) {
+query getImageById($id: MongoID!) {
   imagesById(_id: $id) {
+    _id
     img
+  }
+}
+`
+
+const REMOVE_IMAGE_BY_ID = gql`
+mutation removeImageById($id: MongoID!) {
+  imageDeleteById(_id: $id) {
+    recordId
   }
 }
 `
@@ -44,8 +53,13 @@ export default function Image() {
 
   // delete almond
   const dealmond = async () => {
-    await fetch(`http://localhost:3030/img/${id}`, { method: 'delete' })
-    router.replace('/list')
+    await client.mutate({
+      mutation: REMOVE_IMAGE_BY_ID,
+      variables: {
+        id: id
+      }
+    })
+    router.push('/list')
   }
 
   return (
