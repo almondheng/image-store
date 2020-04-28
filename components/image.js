@@ -1,43 +1,51 @@
-import React, { Component } from 'react';
-import parse from 'html-react-parser';
+import React, { useEffect, useState } from 'react'
 
-export default class Image extends Component {
-	constructor(props) {
-		super(props);
-		this.state = {
-			data: []
-		}
-		this.loadData = this.loadData.bind(this);
-		this.loadData()
-	}
+export default function Image() {
+  const [state, setState] = useState({ data: [] })
 
-	loadData() {
-		fetch("http://localhost:3030/img", { method: 'GET' })
-			.then(response => response.json())
-			.then(result => {
-				console.log(result.data);
-				this.setState({data: result.data})
-			})
-			.catch(error => console.log('error', error));
-	}
+  useEffect(async () => {
+    const res = await fetch("http://localhost:3030/img")
+    const { data } = await res.json()
+    console.log(data)
+    setState({ data })
+  }, [])
 
-	render() {
-		return (
-			<div className="flex-container">
-				{
-					this.state.data.map((value, index) => parse('<div>'+value.img+'</div>'))
-				}
+  return (
+    <div className="container">
 
-			<style jsx>{`
-				.flex-container {
-					padding: 5rem 0;
-					flex: 1;
-					display: flex;
-					flex-direction: row;
-					flex-wrap: wrap;
-				}
-			`}</style>
-			</div>
-		)
-	}
+    {
+      state.data.map(value => (
+        <div key={value._id} id={value._id}
+          dangerouslySetInnerHTML={ { __html: value.img } } />
+      ))
+    }
+
+    <style jsx>{`
+      .container {
+        display: grid;
+        grid-template-columns: repeat(3, 400px);
+        grid-gap: 20px;
+        justify-content: center;
+      }
+
+      .container > div {
+        border: 1px solid red;
+        height: 400px;
+        width: 400px;
+        overflow: hidden;
+      }
+    `}</style>
+
+    <style jsx global>{`
+      figure {
+        margin: 0;  // remove browser default figure
+      }
+
+      .container > div img {
+        height: 100%;
+        max-width: 100%;
+      }
+    `}</style>
+    </div>
+  )
 }
