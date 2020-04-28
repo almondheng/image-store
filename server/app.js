@@ -46,7 +46,9 @@ schemaComposer.Query.addFields({
 })
 
 schemaComposer.Mutation.addFields({
-    imageCreateOne: ImageTC.getResolver('createOne')
+    imageCreateOne: ImageTC.getResolver('createOne'),
+    imageUpdatedById: ImageTC.getResolver('updateById'),
+    imageDeleteById: ImageTC.getResolver('removeById')
 })
 
 const schema = schemaComposer.buildSchema()
