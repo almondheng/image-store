@@ -58,6 +58,7 @@ export default function ImageList() {
         border: 1px solid green;
         height: 450px;
         width: 450px;
+        cursor: pointer;
       }
     `}</style>
 
