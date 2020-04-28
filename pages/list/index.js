@@ -2,10 +2,7 @@ import dynamic from 'next/dynamic'
 import Head from 'next/head'
 import Link from 'next/link'
 
-const Image = dynamic(
-  () => import('../../components/image'),
-  { ssr: false }
-)
+import Image from '../../components/image'
 
 export default function List() {
   return (
@@ -32,9 +29,6 @@ export default function List() {
       <style jsx>{`
         main {
           padding: 5rem 0;
-          flex: 1;
-          display: flex;
-          flex-direction: column;
           justify-content: center;
           align-items: center;
         }
