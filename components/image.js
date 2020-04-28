@@ -3,13 +3,20 @@ import React, { useEffect, useState } from 'react'
 export default function Image() {
   const [state, setState] = useState({ data: [] })
 
+  const fetchData = async () => {
+    const res = await fetch("http://localhost:3030/img")
+    setState(await res.json())
+  }
+
   useEffect(() => {
-    const fetchData = async () => {
-      const res = await fetch("http://localhost:3030/img")
-      setState(await res.json())
-    }
     fetchData()
   }, [])
+
+  // delete almond
+  const dealmond = async id => {
+    await fetch(`http://localhost:3030/img/${id}`, { method: 'delete' })
+    fetchData()
+  }
 
   return (
     <div className="container">
@@ -17,7 +24,8 @@ export default function Image() {
     {
       state.data.map(value => (
         <div key={value._id} id={value._id}
-          dangerouslySetInnerHTML={ { __html: value.img } } />
+          dangerouslySetInnerHTML={ { __html: value.img } }
+          onClick={ () => dealmond(value._id) } />
       ))
     }
 
@@ -27,6 +35,7 @@ export default function Image() {
         grid-template-columns: repeat(3, 400px);
         grid-gap: 20px;
         justify-content: center;
+        transition: transform .3s;
       }
 
       .container > div {
@@ -34,6 +43,12 @@ export default function Image() {
         height: 400px;
         width: 400px;
         overflow: hidden;
+      }
+
+      .container > div:hover {
+        border: 1px solid green;
+        height: 450px;
+        width: 450px;
       }
     `}</style>
 
