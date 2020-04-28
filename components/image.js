@@ -3,11 +3,12 @@ import React, { useEffect, useState } from 'react'
 export default function Image() {
   const [state, setState] = useState({ data: [] })
 
-  useEffect(async () => {
-    const res = await fetch("http://localhost:3030/img")
-    const { data } = await res.json()
-    console.log(data)
-    setState({ data })
+  useEffect(() => {
+    const fetchData = async () => {
+      const res = await fetch("http://localhost:3030/img")
+      setState(await res.json())
+    }
+    fetchData()
   }, [])
 
   return (
