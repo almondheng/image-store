@@ -64,7 +64,7 @@ server.applyMiddleware({ app });
 
 
 // RESTFUL ROUTES
-app.post('/upload', upload.none(), function (req, res, next) {
+app.post('/img', upload.none(), function (req, res, next) {
 
     console.log(req.body)
 
@@ -109,8 +109,8 @@ app.get('/img/:id', function (req, res) {
     })
 })
 
-app.put('/img/:id', function (req, res) {
-    FileModel.findByIdAndUpdate(req.params.id, function (err, data) {
+app.put('/img/:id', upload.none(), function (req, res) {
+    FileModel.findByIdAndUpdate(req.params.id, {img: req.body.img} ,function (err, data) {
         if (err) throw err
         res.json({ data })
     })

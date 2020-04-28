@@ -25,9 +25,9 @@ export default class Editor extends Component {
           redirect: 'follow'
         };
 
-        const { id } = this.props.data.id
+        const id = this.props.data._id
 
-        fetch(`http://localhost:3030/upload/${id}`, requestOptions)
+        fetch(`http://localhost:3030/img/${id}`, requestOptions)
           .then(response => response.text())
           .then(result => {
             console.log(result);
@@ -50,7 +50,7 @@ export default class Editor extends Component {
           redirect: 'follow'
         };
 
-        fetch("http://localhost:3030/upload", requestOptions)
+        fetch("http://localhost:3030/img", requestOptions)
           .then(response => response.text())
           .then(result => {
             console.log(result);
